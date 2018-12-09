@@ -20,8 +20,8 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 		let oa = []; 
 		for ( let i = 0; i < count; i += 1 ) { 
 			let ii = ai + i; 
-			if ( ! ( ii < a .length ) ) 
-				{ break; } 
+			// if ( ! ( ii < a .length ) ) 
+				// { break; } 
 			if ( a .hasOwnProperty( ii ) ) { 
 				oa .push( F( a[ ii ], ii, a ) ); 
 				continue; 
