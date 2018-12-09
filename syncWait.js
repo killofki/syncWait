@@ -16,7 +16,6 @@ function * map100( a, F, { count = 10n } = {} ) {
 		yield oa; 
 		ooa .push( ... oa ); 
 		} 
-	console .log( ooa .length ); 
 	return ooa; // done with final 
 	} 
 
@@ -25,17 +24,21 @@ function iteratorGet( itv, F ) {
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
 	let oa = []; 
-	return F .constructor === ( async q => q ) .constructor ? 
-		  new Promise( res => { let itn = async q => { 
-			let { value, done } = itv .next(); 
-			  done ? res( oa ) 
-			: ( oa .push( await F( value ) ), itn() ) 
-				; 
-			}; } ) 
-		: ( q => { 
-			for( let value, done; { value, done } = itv .next(), ! done; ) { 
-				oa .push( F( value ) ); 
-				} 
-			return oa; 
-			} )() 
+	for( let value, done; { value, done } = itv .next(), ! done; ) { 
+		let v = F( value ); 
+		if ( v instanceof Promise ) { 
+			return v .then( nv => oa .push( nv ) 
+				) .then( q => new Promise( res => { 
+				let itn = async q => { 
+					let { value, done } = itv .next(); 
+					  done ? res( oa ) 
+					: ( oa .push( await F( value ) ), itn() ) 
+						; 
+					}; 
+				itn(); 
+				} ) ); // push catched value & next.. 
+			} 
+		oa .push( F( value ) ); 
+		} 
+	return oa;  
 	} 
