@@ -1,4 +1,4 @@
-iteratorGet( [ 1, 2, 3 ], q => q > 1 ? new Promise( res => setTimeout( r => console.log( q, res( q + 1 ) ), 1000 ) ) : q ) 
+iteratorGet( [ 1, 2, 3 ], q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) : q ) 
 .then( v => console .log( v ) ) 
 	; 
 Promise .all( [ Array( 10001 ), Array( 10 ) ] .map( aa => iteratorGet( 
