@@ -1,4 +1,4 @@
-iteratorGet( map100( Array( 100 ), q => q ), v => ( console .log( v ), v ) ); 
+iteratorGet( map100( Array( 100 ) ) ); 
 
 function * map100( a, F = v => v, { count = 10n } = {} ) { 
 	let ooa = []; 
