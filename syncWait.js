@@ -15,15 +15,24 @@ Promise .all( [ Array( 10001 ), Array( 10 ) ] .map( aa =>
 	; 
 
 function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
-	let ooa = []; 
+	let 
+		  ooa = [] 
+		, iput = { 
+			  [ Symbol .iterator ] : function *(){ 
+				let ii = this .ii; 
+				yield a[ ii ]; yield ii; yield a; 
+				} 
+			, foundProperty : function ( ii ) { return a .hasOwnProperty( 
+				this .ii = ii 
+				); } 
+			, ii : 0 
+			} 
+		; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
 		let oa = []; 
-		for ( let i = 0; i < count; i += 1 ) { 
-			let ii = ai + i; 
-			if ( a .hasOwnProperty( ii ) ) { 
-				oa .push( F( a[ ii ], ii, a ) ); 
-				} 
-			} 
+		for ( let i = 0; i < count; i += 1 ) { if ( iput .foundProperty( ai + i ) ) { 
+			oa .push( F( ... iput ) ); 
+			} } 
 		yield oa; 
 		ooa .push( oa ); 
 		} 
