@@ -31,16 +31,16 @@ function iteratorGet( itv, F = v => v ) {
 	let oa = []; 
 	for( let value, done; { value, done } = itv .next(), ! done; ) { 
 		let v = F( value ); 
-		if ( v instanceof Promise ) { return v .then( 
-				nv => oa .push( nv ) 
-				) .then( q => new Promise( res => { 
+		if ( v instanceof Promise ) { return ( async q => { 
+			oa .push( await v ); 
+			return new Promise( res => { 
 				let itn = async ( { value, done } = itv .next() ) => ( 
 					  done ? res( oa ) 
 					: ( oa .push( await F( value ) ), itn() ) 
 					); 
 				itn(); 
-				} ) ); // push catched value & next.. 
-			} 
+				} ); 
+			} // push catched value & next.. 
 		oa .push( F( value ) ); 
 		} 
 	return oa;  
