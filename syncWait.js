@@ -9,7 +9,7 @@ Promise .all( [ Array( 1000001 ), Array( 10 ) ] .map( aa =>
 		  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
 		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		) 
-	// .then( a => a .flatMap( aa => aa ) ) 
+	.then( a => a .flatMap( aa => aa ) ) 
 	) ) 
 .then( v => console .log( v ) ) 
 	; 
@@ -26,6 +26,7 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 				this .ii = ii 
 				); } 
 			, set value( v ) { this .oa[ this .ii ] = v; } 
+			, set max( m ) { pipe( m, v => this .oa .length = v > count ? count : v ); } 
 			, ii : 0 
 			, oa : [] 
 			} 
@@ -35,9 +36,7 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 		for ( let i = 0; i < count; i += 1 ) { if ( iput .foundProperty( ai + i ) ) { 
 			iput .value = F( ... iput ); 
 			} } 
-		console .log( ai, count, ai + count, ai + count > a .length, a .length ); 
-		iput .oa .length = ai + count > a .length ? a .length - ai : count; 
-		console .log( iput .oa .length ); 
+		iput .max = a .length - ai; 
 		yield iput .oa; 
 		ooa .push( iput .oa ); 
 		} 
