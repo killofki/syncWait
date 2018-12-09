@@ -1,11 +1,10 @@
 Promise .all( 
-[ Array( 10000 ), Array( 10 ) ] 
+[ Array( 10001 ), Array( 10 ) ] 
 .map( aa => 
 	iteratorGet( 
 		  map100( [ ... aa ], v => v, { count : 5000 } ) 
 		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		) 
-	.then ( a => a .flatMap( v => v ) ) 
 	) ) 
 .then( v => console .log( v ) ) 
 	; 
