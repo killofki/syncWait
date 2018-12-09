@@ -1,11 +1,11 @@
 iteratorGet( 
-	  map100( [ ... Array( 100 ) ] ) 
+	  map100( [ ... Array( 1000 ) ] ) 
 	, async q => ( console .log( await delivery( 100, q ) ), q ) 
 	) 
 .then( v => console .log( v .flatMap( v => v ) ) ) 
 	; 
 
-function * map100( a, F = v => v, { count = 10n } = {} ) { 
+function * map100( a, F = v => v, { count = 100n } = {} ) { 
 	let ooa = []; 
 	for ( let ai = 0n; ai < a .length; ai += count ) { 
 		let oa = []; 
