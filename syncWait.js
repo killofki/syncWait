@@ -4,12 +4,12 @@ Promise .all([ iteratorGet( [ 1, 2, 3 ]
 	) ]) 
 .then( pa => console .log( ... pa ) ) 
 	; 
-Promise .all( [ Array( 10001 ), Array( 10 ) ] .map( aa => 
+Promise .all( [ Array( 1000001 ), Array( 10 ) ] .map( aa => 
 	iteratorGet( 
-		  iMap100( [ ... aa ], v => v, { count : 5000 } ) 
-		, async q => ( console .log( await delivery( 500, q ), aa ), q ) 
+		  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
+		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		) 
-	.then( a => a .flatMap( aa => aa ) ) 
+	// .then( a => a .flatMap( aa => aa ) ) 
 	) ) 
 .then( v => console .log( v ) ) 
 	; 
@@ -25,16 +25,21 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 			, foundProperty ( ii ) { return a .hasOwnProperty( 
 				this .ii = ii 
 				); } 
+			, set value( v ) { this .oa[ this .ii ] = v; } 
 			, ii : 0 
+			, oa : [] 
 			} 
 		; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
-		let oa = []; 
+		iput .oa = []; 
 		for ( let i = 0; i < count; i += 1 ) { if ( iput .foundProperty( ai + i ) ) { 
-			oa .push( F( ... iput ) ); 
+			iput .value = F( ... iput ); 
 			} } 
-		yield oa; 
-		ooa .push( oa ); 
+		console .log( ai, count, ai + count, ai + count > a .length, a .length ); 
+		iput .oa .length = ai + count > a .length ? a .length - ai : count; 
+		console .log( iput .oa .length ); 
+		yield iput .oa; 
+		ooa .push( iput .oa ); 
 		} 
 	return ooa .flatMap( v => v ); // done with final 
 	} 
