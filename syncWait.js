@@ -26,9 +26,9 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 				} 
 			} 
 		yield oa; 
-		ooa .push( ... oa ); 
+		ooa .push( oa ); 
 		} 
-	return ooa; // done with final 
+	return ooa .flatMap( v => v ); // done with final 
 	} 
 
 function iteratorGet( itv, F = v => v ) { 
