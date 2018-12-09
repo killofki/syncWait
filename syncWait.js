@@ -22,7 +22,6 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 			let ii = ai + i; 
 			if ( a .hasOwnProperty( ii ) ) { 
 				oa .push( F( a[ ii ], ii, a ) ); 
-				continue; 
 				} 
 			} 
 		yield oa; 
