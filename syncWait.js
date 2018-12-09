@@ -4,6 +4,13 @@ iteratorGet(
 	) 
 .then( v => console .log( v .flatMap( v => v ), 'finished' ) ) 
 	; 
+iteratorGet( 
+	  [ 1, 2, 3 ] 
+	, q => q > 1 ? new Promise( res => setTimeout( r => ( console .log( q ), res( q + 1 ) ), 1000 ) ) 
+		: q 
+	) 
+.then( v => console .log( v, 'timed' ) ) 
+	; 
 
 function * map100( a, F = v => v, { count = 100n } = {} ) { 
 	let ooa = []; 
