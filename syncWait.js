@@ -2,14 +2,14 @@ Promise .all(
 [ Array( 10001 ), Array( 10 ) ] 
 .map( aa => 
 	iteratorGet( 
-		  map100( [ ... aa ], v => v, { count : 5000 } ) 
+		  iMap100( [ ... aa ], v => v, { count : 5000 } ) 
 		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		) 
 	) ) 
 .then( v => console .log( v ) ) 
 	; 
 
-function * map100( a, F = v => v, { count = 100 } = {} ) { 
+function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
 	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
 		let oa = []; 
