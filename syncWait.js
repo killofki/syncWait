@@ -1,4 +1,9 @@
-iteratorGet( map100( Array( 100 ) ) ); 
+iteratorGet( 
+	  map100( [ ... Array( 100 ) ] ) 
+	, async q => ( console .log( await delivery( 100, q ) ), q ) 
+	) 
+.then( v => console .log( v .flatMap( v => v ) ) ) 
+	; 
 
 function * map100( a, F = v => v, { count = 10n } = {} ) { 
 	let ooa = []; 
@@ -42,3 +47,5 @@ function iteratorGet( itv, F = v => v ) {
 		} 
 	return oa;  
 	} 
+
+function delivery( delay, v = delay ) { return new Promise( res => setTimeout( q => res( v ), delay ) ); } 
