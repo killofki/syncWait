@@ -1,8 +1,8 @@
 iteratorGet( 
-	  map100( [ ... Array( 1000 ) ] ) 
+	  map100( Array( 1000 ) ) 
 	, async q => ( console .log( await delivery( 100, q ) ), q ) 
 	) 
-.then( v => console .log( v .flatMap( v => v ) ) ) 
+.then( v => console .log( v .flatMap( v => v ), 'finished' ) ) 
 	; 
 
 function * map100( a, F = v => v, { count = 100n } = {} ) { 
