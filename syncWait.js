@@ -53,4 +53,7 @@ function iteratorGet( itv, F = v => v ) {
 	return oa;  
 	} 
 
-function delivery( delay, v = delay ) { return new Promise( res => setTimeout( q => res( v ), delay ) ); } 
+function delivery( delay, v = delay ) { return new Promise( res => 
+	setTimeout( q => res( v ), delay ) 
+	); } 
+
