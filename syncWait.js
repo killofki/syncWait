@@ -1,6 +1,6 @@
 iteratorGet( map100( Array( 100 ), q => q ), v => ( console .log( v ), v ) ); 
 
-function * map100( a, F, { count = 10n } = {} ) { 
+function * map100( a, F = v => v, { count = 10n } = {} ) { 
 	let ooa = []; 
 	for ( let ai = 0n; ai < a .length; ai += count ) { 
 		let oa = []; 
@@ -19,7 +19,7 @@ function * map100( a, F, { count = 10n } = {} ) {
 	return ooa; // done with final 
 	} 
 
-function iteratorGet( itv, F ) { 
+function iteratorGet( itv, F = v => v ) { 
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
