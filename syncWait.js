@@ -40,7 +40,7 @@ function iteratorGet( itv, F = v => v ) {
 					); 
 				itn(); 
 				} ); 
-			} // push catched value & next.. 
+			} )(); } // push catched value & next.. 
 		oa .push( F( value ) ); 
 		} 
 	return oa;  
