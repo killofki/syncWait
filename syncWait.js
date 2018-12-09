@@ -1,11 +1,7 @@
-Promise .all( 
-[ Array( 10001 ), Array( 10 ) ] 
-.map( aa => 
-	iteratorGet( 
-		  iMap100( [ ... aa ], v => v, { count : 5000 } ) 
-		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
-		) 
-	) ) 
+Promise .all( [ Array( 10001 ), Array( 10 ) ] .map( aa => iteratorGet( 
+	  iMap100( [ ... aa ], v => v, { count : 5000 } ) 
+	, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
+	) ) ) 
 .then( v => console .log( v ) ) 
 	; 
 
