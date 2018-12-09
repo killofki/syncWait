@@ -1,22 +1,20 @@
-iteratorGet( 
-	  map100( Array( 1000 ) ) 
-	, async q => ( console .log( await delivery( 100, q ) ), q ) 
-	) 
-.then( v => console .log( v .flatMap( v => v ), 'finished' ) ) 
-	; 
-iteratorGet( 
-	  [ 1, 2, 3 ] 
-	, q => q > 1 ? new Promise( res => setTimeout( r => ( console .log( q ), res( q + 1 ) ), 1000 ) ) 
-		: q 
-	) 
-.then( v => console .log( v, 'timed' ) ) 
+Promise .all( 
+[ Array( 10000 ), Array( 10 ) ] 
+.map( aa => 
+	iteratorGet( 
+		  map100( [ ... aa ], v => v, { count : 5000 } ) 
+		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
+		) 
+	.then ( a => a .flatMap( v => v ) ) 
+	) ) 
+.then( v => console .log( v ) ) 
 	; 
 
-function * map100( a, F = v => v, { count = 100n } = {} ) { 
+function * map100( a, F = v => v, { count = 100 } = {} ) { 
 	let ooa = []; 
-	for ( let ai = 0n; ai < a .length; ai += count ) { 
+	for ( let ai = 0; ai < a .length; ai += count ) { 
 		let oa = []; 
-		for ( let i = 0n; i < count; i += 1n ) { 
+		for ( let i = 0; i < count; i += 1 ) { 
 			let ii = ai + i; 
 			if ( ! ( ii < a .length ) ) 
 				{ break; } 
@@ -56,4 +54,3 @@ function iteratorGet( itv, F = v => v ) {
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
 	); } 
-
