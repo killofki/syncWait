@@ -25,8 +25,20 @@ function iteratorGet( itv, F ) {
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
 	let oa = []; 
-	for ( let value, done; { value, done } = itv .next(), ! done; ) { 
-		oa .push( F( value ) ); 
-		} 
-	return oa; 
+	return F .constructor === ( async q => q ) .constructor ? 
+		  new Promise( res => { let itn = async q => { 
+			let { value, done } = itv .next(); 
+			if ( done ) { 
+				res( oa ); 
+				return; 
+				} 
+			oa .push( await F( value ) ); 
+			itn(); 
+			}; } ) 
+		: ( q => { 
+			for( let value, done; { value, done } = itv .next(), ! done; ) { 
+				oa .push( F( value ) ); 
+				} 
+			return oa; 
+			} )() 
 	} 
