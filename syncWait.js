@@ -28,12 +28,9 @@ function iteratorGet( itv, F ) {
 	return F .constructor === ( async q => q ) .constructor ? 
 		  new Promise( res => { let itn = async q => { 
 			let { value, done } = itv .next(); 
-			if ( done ) { 
-				res( oa ); 
-				return; 
-				} 
-			oa .push( await F( value ) ); 
-			itn(); 
+			  done ? res( oa ) 
+			: ( oa .push( await F( value ) ), itn() ) 
+				; 
 			}; } ) 
 		: ( q => { 
 			for( let value, done; { value, done } = itv .next(), ! done; ) { 
