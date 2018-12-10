@@ -1,12 +1,15 @@
 iteratorGet( [ 1, 2, 3 ], { 
 	  checker : q => q > 1 ? delivery( 1000, q + 1 ) : q 
-	, res : v => console .log( v ) 
+	, res : v => console .log( v, '123' ) 
 	} ); 
-[ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
+
+[ 1000001, 10 ] 
+.map( n => Array( n ) ) 
+.map( aa => iteratorGet( 
 	  iMap100( aa, v => v, { count : 500000 } ) 
 	, { 
-		  checker : async q => ( console .log( await delivery( 0, q ), aa ), q ) 
-		, res : v => console .log( v, 'con' ) 
+		  checker : async q => ( console .log( await delivery( 0, q ), aa, 'checker' ), q ) 
+		, res : v => console .log( v, 'res' ) 
 		} 
 	) ) 
 	; 
