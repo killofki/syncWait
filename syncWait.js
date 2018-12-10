@@ -5,13 +5,10 @@ iteratorGet( [ 1, 2, 3 ], {
 
 [ 1000001, 10 ] 
 .map( n => Array( n ) ) 
-.map( aa => iteratorGet( 
-	  iMap100( aa, v => v, { count : 500000 } ) 
-	, { 
-		  checker : async q => ( console .log( await delivery( 0, q ), aa, 'checker' ), q ) 
-		, res : v => console .log( v, 'res' ) 
-		} 
-	) ) 
+.map( aa => iteratorGet( iMap100( aa, v => v, { count : 500000 } ), { 
+	  checker : async q => ( console .log( await delivery( 0, q ), aa, 'checker' ), q ) 
+	, res : v => console .log( v, 'res' ) 
+	} ) ) 
 	; 
 
 function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
