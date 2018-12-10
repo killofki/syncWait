@@ -1,6 +1,5 @@
 iteratorGet( [ 1, 2, 3 ], { 
-	  checker : q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) 
-		: q 
+	  checker : q => q > 1 ? delivery( 1000, q + 1 ) : q 
 	, res : v => console .log( v ) 
 	} ); 
 [ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
