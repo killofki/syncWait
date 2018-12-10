@@ -9,39 +9,25 @@ Promise .all( [ Array( 1000001 ), Array( 10 ) ] .map( aa =>
 		  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
 		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		) 
-	.then( a => a .flatMap( aa => aa ) ) 
 	) ) 
 .then( v => console .log( v ) ) 
 	; 
 
 function * iMap100( a, F = v => v, { count = 100, res } = {} ) { 
-	let 
-		  ooa = [] 
-		, iput = { 
-			  [ Symbol .iterator ] : function *(){ 
-				let { ii } = this; 
-				yield a[ ii ]; yield ii; yield a; 
-				} 
-			, foundProperty ( ai, i ) { return a .hasOwnProperty( 
-				this .ii = ai + ( this .i = i ) // double pointer for sliced zone 
-				); } 
-			, set value( v ) { this .oa[ this .i ] = v; } 
-			, set max( m ) { pipe( m, v => this .oa .length = v > count ? count : v ); } 
-			, ii : 0 
-			, i : 0 
-			, oa : [] 
-			} 
-		; 
+	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
-		iput .oa = []; 
-		for ( let i = 0; i < count; i += 1 ) { if ( iput .foundProperty( ai, i ) ) { 
-			iput .value = F( ... iput ); 
+		let oa = []; 
+		for ( let i = 0; i < count; i += 1 ) { if ( a .hasOwnProperty( ai + i ) ) { 
+			oa[ i ] = F( a[ ai + i ] ); 
 			} } 
-		iput .max = a .length - ai; 
+		pipe( 
+			  a .length - ai 
+			, m => oa .length = m > count ? count : m 
+			); 
 		if ( ! res ) { 
-			yield iput .oa; 
+			yield oa; 
 			} 
-		ooa .push( iput .oa ); 
+		ooa .push( oa ); 
 		} 
 	return pipe( 
 		  ooa .flatMap( v => v ) 
