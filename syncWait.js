@@ -45,7 +45,7 @@ function * iMap100( a, F = v => v, { count = 100, res } = {} ) {
 		} 
 	return pipe( 
 		  ooa .flatMap( v => v ) 
-		, ov => res ? res( ov ) : ov 
+		, ov => ( res && res( ov ), ov ) 
 		); // done with final 
 	} 
 
