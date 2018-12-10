@@ -1,9 +1,8 @@
-Promise .all([ iteratorGet( [ 1, 2, 3 ], { 
-	checker : q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) 
+iteratorGet( [ 1, 2, 3 ], { 
+	  checker : q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) 
 		: q 
-	} ) ]) 
-.then( pa => console .log( ... pa ) ) 
-	; 
+	, res : v => console .log( v ) 
+	} ); 
 [ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
 	  iMap100( aa, v => v, { count : 500000 } ) 
 	, { 
