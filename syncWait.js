@@ -53,7 +53,7 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 				itn(); 
 				} ) 
 			) )(); } // push catched value & next.. 
-		oa .push( checker( value ) ); 
+		oa .push( v ); 
 		} 
 	return oa;  
 	} 
