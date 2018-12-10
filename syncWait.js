@@ -13,7 +13,7 @@ Promise .all( [ Array( 1000001 ), Array( 10 ) ] .map( aa =>
 .then( v => console .log( v ) ) 
 	; 
 
-function * iMap100( a, F = v => v, { count = 100, res } = {} ) { 
+function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
 	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
 		let oa = []; 
@@ -24,15 +24,10 @@ function * iMap100( a, F = v => v, { count = 100, res } = {} ) {
 			  a .length - ai 
 			, m => oa .length = m > count ? count : m 
 			); 
-		if ( ! res ) { 
-			yield oa; 
-			} 
+		yield oa; 
 		ooa .push( oa ); 
 		} 
-	return pipe( 
-		  ooa .flatMap( v => v ) 
-		, ov => ( res && res( ov ), ov ) 
-		); // done with final 
+	return ooa .flatMap( v => v ); // done with final 
 	} 
 
 function iteratorGet( itv, F = v => v ) { 
