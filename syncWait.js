@@ -5,7 +5,7 @@ Promise .all([ iteratorGet( [ 1, 2, 3 ], {
 .then( pa => console .log( ... pa ) ) 
 	; 
 [ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
-	  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
+	  iMap100( aa, v => v, { count : 500000 } ) 
 	, { 
 		  checker : async q => ( console .log( await delivery( 0, q ), aa ), q ) 
 		, res : v => console .log( v, 'con' ) 
@@ -27,7 +27,7 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 		yield oa; 
 		ooa .push( oa ); 
 		} 
-	return ooa .flatMap( v => v ); // done with final 
+	return [] .concat( ... ooa ); // done with final 
 	} 
 
 function iteratorGet( itv, { checker = v => v, res } = {} ) { 
@@ -38,7 +38,7 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 	for( 
 			  let value, done
 			; { value, done } = itv .next()
-			, done && res && res( oa .flatMap( a => a ) ) 
+			, done && res && res( [] .concat( ... oa ) ) 
 			, ! done
 			; 
 			) { 
@@ -47,7 +47,7 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 			  oa .push( await v ) 
 			, new Promise( Pres => { 
 				let itn = async ( { value, done } = itv .next() ) => ( 
-					  done ? ( res && res( oa .flatMap( a => a ) ), Pres( oa ) ) 
+					  done ? ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
 					: ( oa .push( await checker( value ) ), itn() ) 
 					); 
 				itn(); 
