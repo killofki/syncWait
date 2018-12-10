@@ -1,13 +1,15 @@
-Promise .all([ iteratorGet( [ 1, 2, 3 ] 
-	, q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) 
+Promise .all([ iteratorGet( [ 1, 2, 3 ], { 
+	checker : q => q > 1 ? new Promise( res => setTimeout( r => res( q + 1 ), 1000 ) ) 
 		: q 
-	) ]) 
+	} ) ]) 
 .then( pa => console .log( ... pa ) ) 
 	; 
 [ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
 	  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
-	, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
-	, { res : v => console .log( v, 'con' ) } 
+	, { 
+		  checker : async q => ( console .log( await delivery( 0, q ), aa ), q ) 
+		, res : v => console .log( v, 'con' ) 
+		} 
 	) ) 
 	; 
 
@@ -28,7 +30,7 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 	return ooa .flatMap( v => v ); // done with final 
 	} 
 
-function iteratorGet( itv, F = v => v, { res } = {} ) { 
+function iteratorGet( itv, { checker = v => v, res } = {} ) { 
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
@@ -40,18 +42,18 @@ function iteratorGet( itv, F = v => v, { res } = {} ) {
 			, ! done
 			; 
 			) { 
-		let v = F( value ); 
+		let v = checker( value ); 
 		if ( v instanceof Promise ) { return ( async q => (  
 			  oa .push( await v ) 
 			, new Promise( Pres => { 
 				let itn = async ( { value, done } = itv .next() ) => ( 
 					  done ? ( res && res( oa .flatMap( a => a ) ), Pres( oa ) ) 
-					: ( oa .push( await F( value ) ), itn() ) 
+					: ( oa .push( await checker( value ) ), itn() ) 
 					); 
 				itn(); 
 				} ) 
 			) )(); } // push catched value & next.. 
-		oa .push( F( value ) ); 
+		oa .push( checker( value ) ); 
 		} 
 	return oa;  
 	} 
