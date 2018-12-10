@@ -15,6 +15,9 @@ iteratorGet( [ 1, 2, 3 ], {
 	; 
 
 function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
+	if ( count < 1 ) { 
+		count = 1; // guard about no result 
+		} 
 	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += count ) { 
 		let oa = []; 
