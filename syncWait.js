@@ -4,13 +4,11 @@ Promise .all([ iteratorGet( [ 1, 2, 3 ]
 	) ]) 
 .then( pa => console .log( ... pa ) ) 
 	; 
-Promise .all( [ Array( 1000001 ), Array( 10 ) ] .map( aa => 
-	iteratorGet( 
-		  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
-		, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
-		) 
+[ Array( 1000001 ), Array( 10 ) ] .map( aa => iteratorGet( 
+	  iMap100( [ ... aa ], v => v, { count : 500000 } ) 
+	, async q => ( console .log( await delivery( 0, q ), aa ), q ) 
+	, { res : v => console .log( v, 'con' ) } 
 	) ) 
-.then( v => console .log( v ) ) 
 	; 
 
 function * iMap100( a, F = v => v, { count = 100 } = {} ) { 
@@ -30,18 +28,24 @@ function * iMap100( a, F = v => v, { count = 100 } = {} ) {
 	return ooa .flatMap( v => v ); // done with final 
 	} 
 
-function iteratorGet( itv, F = v => v ) { 
+function iteratorGet( itv, F = v => v, { res } = {} ) { 
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
 	let oa = []; 
-	for( let value, done; { value, done } = itv .next(), ! done; ) { 
+	for( 
+			  let value, done
+			; { value, done } = itv .next()
+			, done && res && res( oa .flatMap( a => a ) ) 
+			, ! done
+			; 
+			) { 
 		let v = F( value ); 
 		if ( v instanceof Promise ) { return ( async q => (  
 			  oa .push( await v ) 
-			, new Promise( res => { 
+			, new Promise( Pres => { 
 				let itn = async ( { value, done } = itv .next() ) => ( 
-					  done ? res( oa ) 
+					  done ? ( res && res( oa .flatMap( a => a ) ), Pres( oa ) ) 
 					: ( oa .push( await F( value ) ), itn() ) 
 					); 
 				itn(); 
