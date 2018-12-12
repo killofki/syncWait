@@ -42,8 +42,8 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 	for( 
 			  let value, done
 			; { value, done } = itv .next()
-			, done && res && res( [] .concat( ... oa ) ) 
-			, ! done
+			, done && res ? res( [] .concat( ... oa ) ) 
+				: true // continue 
 			; 
 			) { 
 		let v = checker( value ); 
