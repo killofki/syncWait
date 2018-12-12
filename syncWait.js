@@ -47,7 +47,7 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 			; 
 			) { 
 		let v = checker( value ); 
-		if ( v instanceof Promise ) { return ( async ( 
+		if ( v instanceof Promise ) { return ( async ( // switch to promise 
 				  itnF = Pres => async ( { value, done } = itv .next() ) => ( 
 					  done ? ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
 					: ( oa .push( await checker( value ) ), itn() ) 
