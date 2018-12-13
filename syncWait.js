@@ -17,7 +17,7 @@ iGet( [ 1, 2, 3 ], {
 	; 
 
 var module = module || {}; 
-Object .assign( module .export = module .export || {}, { 
+Object .assign( module .exports = module .exports || {}, { 
 	iMap100, iGet 
 	} ); 
 
