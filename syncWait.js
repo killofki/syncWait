@@ -69,7 +69,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			, itn 
 			) { 
 		oa .push( await v ); 
-		return new Promise( Pres => ( itn = itnF( Pres ), itn() ) ); 
+		return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
 		} // -- switchtoPromise() 
 	} // -- iGet() 
 
