@@ -76,7 +76,7 @@ async function switchtoPromise(
 		, itnF = Pres => async ( value, done ) => ( 
 			  { value, done } = whileF() 
 			, done ? whenDoneF( Pres ) 
-			: ( await notDoneF( value ), itn() ) 
+				: ( await notDoneF( value ), itn() ) 
 			) 
 		, itn 
 		) { 
