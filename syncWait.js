@@ -18,7 +18,7 @@ iGet( [ 1, 2, 3 ], {
 
 var module = module || {}; 
 Object .assign( module .exports = module .exports || {}, { 
-	iMap100, iGet 
+	iMap100, iGet, switchtoPromise 
 	} ); 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
