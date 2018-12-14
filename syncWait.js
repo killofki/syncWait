@@ -55,12 +55,12 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			) { 
 		let v = checker( value ); 
 		if ( v instanceof Promise ) { 
-			return switchtoPromise( 
-				  async q => oa .push( await v ) 
-				, q => itv .next() 
-				, async value => oa .push( await checker( value ) ) 
-				, Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
-				); 
+			return switchtoPromise({ 
+				  preF : async q => oa .push( await v ) 
+				, whileF : q => itv .next() 
+				, notDoneF : async value => oa .push( await checker( value ) ) 
+				, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
+				}); 
 			} 
 		oa .push( v ); 
 		} 
@@ -69,10 +69,12 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	} // -- iGet() 
 
 async function switchtoPromise( 
-		  preF 
-		, whileF // not guard with async 
-		, notDoneF 
-		, whenDoneF 
+		  { 
+			  preF 
+			, whileF // not guard with async 
+			, notDoneF 
+			, whenDoneF 
+			} 
 		, itnF = Pres => async ( { value, done } = whileF() ) => ( 
 			  done ? whenDoneF( Pres ) 
 			: ( await notDoneF( value ), itn() ) 
