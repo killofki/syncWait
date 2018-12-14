@@ -58,7 +58,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			  preF : async q => oa .push( await v ) 
 			, whileF : q => itv .next() 
 			, notDoneF : async value => oa .push( await checker( value ) ) 
-			, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
+			, whenDoneF : ( value, Pres ) => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
 			}); } 
 		oa .push( v ); 
 		} 
@@ -75,7 +75,7 @@ async function switchtoPromise({
 	let  
 		  itnF = Pres => async ( value, done ) => ( 
 			  { value, done } = await whileF() 
-			, done ? whenDoneF( Pres ) 
+			, done ? whenDoneF( value, Pres ) 
 				: ( await notDoneF( value ), itn() ) 
 			) 
 		, itn 
