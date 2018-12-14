@@ -54,14 +54,12 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			; 
 			) { 
 		let v = checker( value ); 
-		if ( v instanceof Promise ) { 
-			return switchtoPromise({ 
-				  preF : async q => oa .push( await v ) 
-				, whileF : q => itv .next() 
-				, notDoneF : async value => oa .push( await checker( value ) ) 
-				, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
-				}); 
-			} 
+		if ( v instanceof Promise ) { return switchtoPromise({ 
+			  preF : async q => oa .push( await v ) 
+			, whileF : q => itv .next() 
+			, notDoneF : async value => oa .push( await checker( value ) ) 
+			, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
+			}); } 
 		oa .push( v ); 
 		} 
 	return oa;  
