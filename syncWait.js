@@ -59,7 +59,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 				  async q => oa .push( await v ) 
 				, q => itv .next() 
 				, async value => oa .push( await checker( value ) ) 
-				, q => res && res( [] .concat( ... oa ) ) 
+				, Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
 				); 
 			} 
 		oa .push( v ); 
@@ -74,7 +74,7 @@ async function switchtoPromise(
 		, notDoneF 
 		, whenDoneF 
 		, itnF = Pres => async ( { value, done } = whileF() ) => ( 
-			  done ? ( await whenDoneF(), Pres( oa ) ) 
+			  done ? whenDoneF( Pres ) 
 			: ( await notDoneF( value ), itn() ) 
 			) 
 		, itn 
