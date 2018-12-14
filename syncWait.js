@@ -66,20 +66,20 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	
 	} // -- iGet() 
 
-async function switchtoPromise( 
-		  { 
+async function switchtoPromise({ 
 			  preF 
 			, whileF 
 			, notDoneF 
 			, whenDoneF 
-			} 
-		, itnF = Pres => async ( value, done ) => ( 
+			}) { 
+	let  
+		  itnF = Pres => async ( value, done ) => ( 
 			  { value, done } = await whileF() 
 			, done ? whenDoneF( Pres ) 
 				: ( await notDoneF( value ), itn() ) 
 			) 
 		, itn 
-		) { 
+		; 
 	await preF(); 
 	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
 	} // -- switchtoPromise() 
