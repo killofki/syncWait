@@ -55,23 +55,33 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			) { 
 		let v = checker( value ); 
 		if ( v instanceof Promise ) { 
-			return switchtoPromise( v ); 
+			return switchtoPromise( 
+				  async q => oa .push( await v ) 
+				, q => itv .next() 
+				, async value => oa .push( await checker( value ) ) 
+				, q => res && res( [] .concat( ... oa ) ) 
+				); 
 			} 
 		oa .push( v ); 
 		} 
 	return oa;  
 	
-	async function switchtoPromise( v 
-			, itnF = Pres => async ( { value, done } = itv .next() ) => ( 
-				  done ? ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
-				: ( oa .push( await checker( value ) ), itn() ) 
-				) 
-			, itn 
-			) { 
-		oa .push( await v ); 
-		return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
-		} // -- switchtoPromise() 
 	} // -- iGet() 
+
+async function switchtoPromise( 
+		  preF 
+		, whileF // not guard with async 
+		, notDoneF 
+		, whenDoneF 
+		, itnF = Pres => async ( { value, done } = whileF() ) => ( 
+			  done ? ( await whenDoneF(), Pres( oa ) ) 
+			: ( await notDoneF( value ), itn() ) 
+			) 
+		, itn 
+		) { 
+	await preF(); 
+	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
+	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
