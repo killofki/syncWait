@@ -49,7 +49,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	for( 
 			  let value, done
 			; { value, done } = itv .next()
-			, done && res ? res( [] .concat( ... oa ) ) 
+			, done && res ? ( res( [] .concat( ... oa ) ), false ) 
 				: true // continue 
 			; 
 			) { 
