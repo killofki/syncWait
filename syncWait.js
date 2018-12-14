@@ -67,10 +67,10 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	} // -- iGet() 
 
 async function switchtoPromise({ 
-			  preF 
-			, whileF 
-			, notDoneF 
-			, whenDoneF 
+			  preF // missing on press 
+			, whileF // ( iterator || generator ) .next() 
+			, notDoneF // with recall itn 
+			, whenDoneF // without recall itn 
 			}) { 
 	let  
 		  itnF = Pres => async ( value, done ) => ( 
