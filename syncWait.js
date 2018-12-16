@@ -52,7 +52,19 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			, { value, done } = itvn 
 			, done && res ? ( res( [] .concat( ... oa ) ), false ) 
 				: done === false ? true // continue 
-				: console .error( 'sorry...', itv ) 
+				: ( switchtoPromise({ // for // async function *(){} 
+					  preF : q => q 
+					, whileF : async ( Pres 
+							, value, done 
+							) => ( 
+						  { value, done } = await ( itvn || itv .next() ) 
+						, itvn = undefined 
+						, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
+							: done === false ? oa .push( await checker( value ) ) 
+							: oa .push( await checker( value ) ) 
+						, ! done 
+						) 
+					}), false ) // break with return 
 			; 
 			) { 
 		let v = checker( value ); 
@@ -61,7 +73,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			, whileF : async ( Pres 
 					, value, done 
 					) => ( 
-				  { value, done } = itv .next() 
+				  { value, done } = await itv .next() 
 				, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
 					: done === false ? oa .push( await checker( value ) ) 
 					: oa .push( await checker( value ) ) 
