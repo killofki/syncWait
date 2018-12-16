@@ -92,8 +92,8 @@ async function switchtoPromise({
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
-		  itnF = Pres => ( itn = ( async q => 
-			( await whileF( Pres ) ) && itn() 
+		  itnF = res => ( itn = ( async q => 
+			( await whileF( res ) ) && itn() 
 			) )() 
 		, itn 
 		; 
