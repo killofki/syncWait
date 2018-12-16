@@ -76,12 +76,13 @@ async function switchtoPromise({
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
-		  itnF = Pres => async ( value, done ) => 
+		  itnF = Pres => ( itn = ( async q => 
 			( await whileF( Pres ) ) && itn() 
+			) )() 
 		, itn 
 		; 
 	await preF(); 
-	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
+	return new Promise( itnF ); 
 	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
