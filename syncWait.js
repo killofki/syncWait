@@ -47,10 +47,12 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 		} 
 	let oa = []; 
 	for( 
-			  let value, done
-			; { value, done } = itv .next()
+			  let value, done, itvn 
+			; itvn = itv .next() 
+			, { value, done } = itvn 
 			, done && res ? ( res( [] .concat( ... oa ) ), false ) 
-				: true // continue 
+				: done === false ? true // continue 
+				: console .error( 'sorry...', itv ) 
 			; 
 			) { 
 		let v = checker( value ); 
@@ -61,6 +63,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 					) => ( 
 				  { value, done } = itv .next() 
 				, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
+					: done === false ? oa .push( await checker( value ) ) 
 					: oa .push( await checker( value ) ) 
 				, ! done 
 				) 
