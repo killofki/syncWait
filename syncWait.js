@@ -15,6 +15,10 @@ iGet( [ 1, 2, 3 ], {
 	, res : v => console .log( v, 'res' ) 
 	} ) ) 
 	; 
+iGet( ( function * () { yield 1; yield 2; } )(), { 
+	  checker : v => ( delivery( 1000 ), v ) 
+	, res : v => console .log( v, 'async iterator' ) 
+	} ); 
 
 var module = module || {}; 
 Object .assign( module .exports = module .exports || {}, { 
@@ -53,13 +57,28 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
 				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
-					  preF : q => q 
+					  preF : async ( 
+							value, done 
+							) => ( 
+						  { value, done } = await itvn 
+						, done ? ( 
+								  res && res ( [] .concat( ... oa ) )
+								, Pres( oa ) 
+								, itvn = itv .next() 
+								) 
+							: done === false ? oa .push( await checker( value ) ) 
+							: console .error( 'sorry..', done, value, itv ) 
+						) 
 					, whileF : async ( Pres 
 							, value, done 
 							) => ( 
-						  { value, done } = await ( itvn || itv .next() ) 
+						  { value, done } = await itvn 
 						, itvn = undefined 
-						, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
+						, done ? ( 
+								  res && res ( [] .concat( ... oa ) ) 
+								, Pres( oa ) 
+								, itvn = itv .next() 
+								) 
 							: done === false ? oa .push( await checker( value ) ) 
 							: console .error( 'sorry..', done, value, itv ) 
 						, done === false 
@@ -88,7 +107,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	} // -- iGet() 
 
 async function switchtoPromise({ 
-			  preF // missing on press 
+			  preF = q => q // missing on while 
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
