@@ -79,13 +79,13 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	
 	async function whileF( Pres ) { 
 		let { value, done } = await itvn; 
-		done ? ( 
+		done ? ( // when no more 
 				  res && res ( [] .concat( ... oa ) ) 
 				, Pres( oa ) 
 				) 
-			: done === false ? ( 
+			: done === false ? ( // continue 
 				  oa .push( await checker( value ) ) 
-				, itvn = itv .next() 
+				, itvn = itv .next() // get next pre 
 				) 
 			: console .error( 'sorry..', done, value, itv ) 
 			; 
