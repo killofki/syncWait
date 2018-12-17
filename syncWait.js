@@ -78,13 +78,22 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			) { 
 		let v = checker( value ); 
 		if ( v instanceof Promise ) { return switchtoPromise({ 
-			  preF : async q => oa .push( await v ) 
+			  preF : async q => ( 
+				  oa .push( await v ) 
+				, itvn = itv .next() 
+				) 
 			, whileF : async ( Pres 
 					, value, done 
 					) => ( 
-				  { value, done } = await itv .next() 
-				, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
-					: done === false ? oa .push( await checker( value ) ) 
+				  { value, done } = await itvn 
+				, done ? ( 
+						  res && res ( [] .concat( ... oa ) ) 
+						, Pres( oa ) 
+						) 
+					: done === false ? ( 
+						  oa .push( await checker( value ) ) 
+						, itvn = itv .next() 
+						) 
 					: console .error( 'sorry..', done, value, itv ) 
 				, done === false 
 				) 
