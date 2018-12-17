@@ -57,23 +57,10 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
 				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
-					  preF : async ( 
-							value, done 
-							) => ( 
-						  { value, done } = await itvn 
-						, done ? ( 
-								  res && res ( [] .concat( ... oa ) )
-								, Pres( oa ) 
-								, itvn = itv .next() 
-								) 
-							: done === false ? oa .push( await checker( value ) ) 
-							: console .error( 'sorry..', done, value, itv ) 
-						) 
-					, whileF : async ( Pres 
+					whileF : async ( Pres 
 							, value, done 
 							) => ( 
 						  { value, done } = await itvn 
-						, itvn = undefined 
 						, done ? ( 
 								  res && res ( [] .concat( ... oa ) ) 
 								, Pres( oa ) 
