@@ -50,28 +50,17 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
-	let oa = []; 
+	let 
+		  oa = [] 
+		, itvn 
+		; 
 	for( 
-			  let value, done, itvn 
+			  let value, done 
 			; itvn = itv .next() 
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
 				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
-					whileF : async ( Pres 
-							, value, done 
-							) => ( 
-						  { value, done } = await itvn 
-						, done ? ( 
-								  res && res ( [] .concat( ... oa ) ) 
-								, Pres( oa ) 
-								) 
-							: done === false ? ( 
-								  oa .push( await checker( value ) ) 
-								, itvn = itv .next() 
-								) 
-							: console .error( 'sorry..', done, value, itv ) 
-						, done === false 
-						) 
+					whileF 
 					}) // break with return  
 			, done === false // continue 
 			; 
@@ -82,25 +71,26 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 				  oa .push( await v ) 
 				, itvn = itv .next() 
 				) 
-			, whileF : async ( Pres 
-					, value, done 
-					) => ( 
-				  { value, done } = await itvn 
-				, done ? ( 
-						  res && res ( [] .concat( ... oa ) ) 
-						, Pres( oa ) 
-						) 
-					: done === false ? ( 
-						  oa .push( await checker( value ) ) 
-						, itvn = itv .next() 
-						) 
-					: console .error( 'sorry..', done, value, itv ) 
-				, done === false 
-				) 
+			, whileF 
 			}); } 
 		oa .push( v ); 
 		} 
 	return oa;  
+	
+	async function whileF( Pres ) { 
+		let { value, done } = await itvn; 
+		done ? ( 
+				  res && res ( [] .concat( ... oa ) ) 
+				, Pres( oa ) 
+				) 
+			: done === false ? ( 
+				  oa .push( await checker( value ) ) 
+				, itvn = itv .next() 
+				) 
+			: console .error( 'sorry..', done, value, itv ) 
+			; 
+		return done === false; 
+		} // -- whileF() 
 	
 	} // -- iGet() 
 
