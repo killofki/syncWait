@@ -15,7 +15,7 @@ iGet( [ 1, 2, 3 ], {
 	, res : v => console .log( v, 'res' ) 
 	} ) ) 
 	; 
-iGet( ( function * () { yield 1; yield 2; } )(), { 
+iGet( ( function * () { yield 1; yield 2; yield 3; } )(), { 
 	  checker : v => ( delivery( 1000 ), v ) 
 	, res : v => console .log( v, 'async iterator' ) 
 	} ); 
@@ -64,9 +64,11 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 						, done ? ( 
 								  res && res ( [] .concat( ... oa ) ) 
 								, Pres( oa ) 
+								) 
+							: done === false ? ( 
+								  oa .push( await checker( value ) ) 
 								, itvn = itv .next() 
 								) 
-							: done === false ? oa .push( await checker( value ) ) 
 							: console .error( 'sorry..', done, value, itv ) 
 						, done === false 
 						) 
