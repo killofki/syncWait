@@ -59,7 +59,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			; itvn = itv .next() 
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
-				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
+				: done !== false && switchtoPromise({ // for // async function *(){} 
 					whileF 
 					}) // break with return  
 			, done === false // continue 
