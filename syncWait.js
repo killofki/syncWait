@@ -26,9 +26,9 @@ Object .assign( module .exports = module .exports || {}, {
 	} ); 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
-	if ( ! ( splitcount >= 1 ) ) { 
-		splitcount = 1; // guard about no result 
-		} 
+	   ( splitcount >= 1 ) 
+	|| ( splitcount = 1 ) // guard about no result 
+		; 
 	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += splitcount ) { 
 		let oa = []; 
