@@ -75,20 +75,28 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	return oa;  
 	
 	async function whileF( Pres, Perr ) { // use outer // res, oa, itv, itvn, checker 
-		let { value, done } = await itvn; 
-		  done ? ( // when no more 
-			  res && res ( [] .concat( ... oa ) ) 
-			, Pres( oa ) 
-			) 
-		: done === false ? ( // continue 
-			  oa .push( await checker( value ) ) 
-			, itvn = itv .next() // get next pre 
-			) 
-		: ( 
-			  console .error( 'sorry..', done, value, itv ) 
-			, Perr( itv ) 
-			) 
-			; 
+		let value, done; 
+		try { 
+			( { value, done } = await itvn ); 
+			  done ? ( // when no more 
+				  res && res ( [] .concat( ... oa ) ) 
+				, Pres( oa ) 
+				) 
+			: done === false ? ( // continue 
+				  oa .push( await checker( value ) ) 
+				, itvn = itv .next() // get next pre 
+				) 
+			: ( 
+				  console .error( 'sorry.. iterator stoped.', done, value, itv ) 
+				, Perr( itv ) 
+				) 
+				; 
+			} 
+		catch( errv ) { 
+			console .error( 'catched', errv ); 
+			Perr( errv ); 
+			return; 
+			} 
 		return done === false; 
 		} // -- whileF() 
 	
