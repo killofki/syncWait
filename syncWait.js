@@ -74,7 +74,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 		} 
 	return oa;  
 	
-	async function whileF( Pres ) { 
+	async function whileF( Pres ) { // use outer // res, oa, itv, itvn 
 		let { value, done } = await itvn; 
 		done ? ( // when no more 
 				  res && res ( [] .concat( ... oa ) ) 
