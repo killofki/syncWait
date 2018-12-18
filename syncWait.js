@@ -47,9 +47,9 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 
 function iGet( itv, { checker = v => v, res } = {} ) { 
 	// res = v => console .log( v ) 
-	if ( ! ( itv .next instanceof Function ) ) { 
-		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
-		} 
+	   ( itv .next instanceof Function ) 
+	|| ( itv = itv[ Symbol .iterator ]() ) // error or catch iterator obj 
+		; 
 	let oa = [], itvn; 
 	for( 
 			  let value, done 
