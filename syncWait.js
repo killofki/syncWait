@@ -50,10 +50,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
-	let 
-		  oa = [] 
-		, itvn 
-		; 
+	let oa = [], itvn; 
 	for( 
 			  let value, done 
 			; itvn = itv .next() 
