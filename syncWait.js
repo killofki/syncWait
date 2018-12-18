@@ -37,7 +37,7 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 			} } 
 		pipe( 
 			  a .length - ai 
-			, m => oa .length = m > splitcount ? splitcount : m 
+			, oal => oa .length = oal > splitcount ? splitcount : oal 
 			); 
 		yield oa; 
 		ooa .push( oa ); 
