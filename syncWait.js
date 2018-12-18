@@ -74,7 +74,7 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 		} 
 	return oa;  
 	
-	async function whileF( Pres ) { // use outer // res, oa, itv, itvn, checker 
+	async function whileF( Pres, Perr ) { // use outer // res, oa, itv, itvn, checker 
 		let { value, done } = await itvn; 
 		  done ? ( // when no more 
 			  res && res ( [] .concat( ... oa ) ) 
@@ -84,7 +84,10 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			  oa .push( await checker( value ) ) 
 			, itvn = itv .next() // get next pre 
 			) 
-		: console .error( 'sorry..', done, value, itv ) 
+		: ( 
+			  console .error( 'sorry..', done, value, itv ) 
+			, Perr( itv ) 
+			) 
 			; 
 		return done === false; 
 		} // -- whileF() 
@@ -96,8 +99,8 @@ async function switchtoPromise({
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
-		  itnF = res => ( itn = ( async q => 
-			( await whileF( res ) ) && itn() 
+		  itnF = ( res, err ) => ( itn = ( async q => 
+			( await whileF( res, err ) ) && itn() 
 			) )() 
 		, itn 
 		; 
