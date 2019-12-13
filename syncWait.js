@@ -116,10 +116,10 @@ async function switchtoPromise({
 		  preF = q => q // missing on while 
 		, whileF // ( iterator || generator ) .next() 
 		}) { 
+	let itn 
 	let itnF = ( res, err ) => ( itn = ( async q => 
 		( await whileF( res, err ) ) && itn() 
 		) )() 
-	let itn 
 	
 	await preF() 
 	return new Promise( itnF ) 
