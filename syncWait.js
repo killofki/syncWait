@@ -70,24 +70,27 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 					}) // break with return  
 			, done === false // continue 
 			; ) { 
-		let v = checker( value ); 
-		if ( v instanceof Promise ) { return switchtoPromise({ 
-			  preF : async q => ( 
-				  oa .push( await v ) 
-				, itvn = itv .next() 
-				) 
-			, whileF 
-			}); } 
-		oa .push( v ); 
+		let v = checker( value ) 
+		if ( v instanceof Promise ) { 
+			return switchtoPromise({ 
+				  preF : async q => { 
+					oa .push( await v ) 
+					return itvn = itv .next() 
+					} 
+				, whileF 
+				}) 
+			} 
+		oa .push( v ) 
 		} 
-	return oa;  
+	return oa 
 	
 	async function whileF( Pres, Perr ) { // use outer // res, oa, itv, itvn, checker 
-		let value, done; 
+		// itvn 
+		let value, done 
 		try { 
-			( { value, done } = await itvn ); 
+			; ( { value, done } = await itvn ) 
 			  done ? ( // when no more 
-				  res && res ( [] .concat( ... oa ) ) 
+				  res && res( [] .concat( ... oa ) ) 
 				, Pres( oa ) 
 				) 
 			: done === false ? ( // continue 
@@ -98,34 +101,32 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 				  console .error( 'sorry.. iterator stoped.', done, value, itv ) 
 				, Perr( itv ) 
 				) 
-				; 
 			} 
 		catch( errv ) { 
-			console .error( 'catched', errv ); 
-			Perr( errv ); 
-			return; 
+			console .error( 'catched', errv ) 
+			Perr( errv ) 
+			return 
 			} 
-		return done === false; 
+		return done === false 
 		} // -- whileF() 
 	
 	} // -- iGet() 
 
 async function switchtoPromise({ 
-			  preF = q => q // missing on while 
-			, whileF // ( iterator || generator ) .next() 
-			}) { 
-	let  
-		  itnF = ( res, err ) => ( itn = ( async q => 
-			( await whileF( res, err ) ) && itn() 
-			) )() 
-		, itn 
-		; 
-	await preF(); 
-	return new Promise( itnF ); 
+		  preF = q => q // missing on while 
+		, whileF // ( iterator || generator ) .next() 
+		}) { 
+	let itnF = ( res, err ) => ( itn = ( async q => 
+		( await whileF( res, err ) ) && itn() 
+		) )() 
+	let itn 
+	
+	await preF() 
+	return new Promise( itnF ) 
 	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
-	); } // -- delivery() 
+	) } // -- delivery() 
 
 function pipeReduce( ... ar ) { return ar .reduce( ( o, F ) => F( o ) ); } // -- pipeReduce() 
