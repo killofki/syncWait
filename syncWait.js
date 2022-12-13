@@ -49,16 +49,21 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	for( 
 			  let value, done
 			; { value, done } = itv .next()
-			, done && res ? res( [] .concat( ... oa ) ) 
+			, done && res ? ( res( [] .concat( ... oa ) ), false ) 
 				: true // continue 
 			; 
 			) { 
 		let v = checker( value ); 
 		if ( v instanceof Promise ) { return switchtoPromise({ 
 			  preF : async q => oa .push( await v ) 
-			, whileF : q => itv .next() 
-			, notDoneF : async value => oa .push( await checker( value ) ) 
-			, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
+			, whileF : async ( Pres 
+					, value, done 
+					) => ( 
+				  { value, done } = itv .next() 
+				, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
+					: oa .push( await checker( value ) ) 
+				, ! done 
+				) 
 			}); } 
 		oa .push( v ); 
 		} 
@@ -66,20 +71,15 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 	
 	} // -- iGet() 
 
-async function switchtoPromise( 
-		  { 
-			  preF 
-			, whileF 
-			, notDoneF 
-			, whenDoneF 
-			} 
-		, itnF = Pres => async ( value, done ) => ( 
-			  { value, done } = whileF() 
-			, done ? whenDoneF( Pres ) 
-				: ( await notDoneF( value ), itn() ) 
-			) 
+async function switchtoPromise({ 
+			  preF // missing on press 
+			, whileF // ( iterator || generator ) .next() 
+			}) { 
+	let  
+		  itnF = Pres => async ( value, done ) => 
+			( await whileF( Pres ) ) && itn() 
 		, itn 
-		) { 
+		; 
 	await preF(); 
 	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
 	} // -- switchtoPromise() 
