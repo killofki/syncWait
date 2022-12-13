@@ -26,9 +26,9 @@ Object .assign( module .exports = module .exports || {}, {
 	} ); 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
-	if ( splitcount < 1 ) { 
-		splitcount = 1; // guard about no result 
-		} 
+	   ( splitcount >= 1 ) 
+	|| ( splitcount = 1 ) // guard about no result 
+		; 
 	let ooa = []; 
 	for ( let ai = 0; ai < a .length; ai += splitcount ) { 
 		let oa = []; 
@@ -37,7 +37,7 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 			} } 
 		pipe( 
 			  a .length - ai 
-			, m => oa .length = m > splitcount ? splitcount : m 
+			, oal => oa .length = oal > splitcount ? splitcount : oal 
 			); 
 		yield oa; 
 		ooa .push( oa ); 
@@ -47,19 +47,16 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 
 function iGet( itv, { checker = v => v, res } = {} ) { 
 	// res = v => console .log( v ) 
-	if ( ! ( itv .next instanceof Function ) ) { 
-		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
-		} 
-	let 
-		  oa = [] 
-		, itvn 
+	   ( itv .next instanceof Function ) 
+	|| ( itv = itv[ Symbol .iterator ]() ) // error or catch iterator obj 
 		; 
+	let oa = [], itvn; 
 	for( 
 			  let value, done 
 			; itvn = itv .next() 
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
-				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
+				: done !== false && switchtoPromise({ // for // async function *(){} 
 					whileF 
 					}) // break with return  
 			, done === false // continue 
@@ -77,9 +74,11 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 		} 
 	return oa;  
 	
-	async function whileF( Pres ) { 
-		let { value, done } = await itvn; 
-		done ? ( // when no more 
+	async function whileF( Pres, Perr ) { // use outer // res, oa, itv, itvn, checker 
+		let value, done; 
+		try { 
+			( { value, done } = await itvn ); 
+			  done ? ( // when no more 
 				  res && res ( [] .concat( ... oa ) ) 
 				, Pres( oa ) 
 				) 
@@ -87,8 +86,17 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 				  oa .push( await checker( value ) ) 
 				, itvn = itv .next() // get next pre 
 				) 
-			: console .error( 'sorry..', done, value, itv ) 
-			; 
+			: ( 
+				  console .error( 'sorry.. iterator stoped.', done, value, itv ) 
+				, Perr( itv ) 
+				) 
+				; 
+			} 
+		catch( errv ) { 
+			console .error( 'catched', errv ); 
+			Perr( errv ); 
+			return; 
+			} 
 		return done === false; 
 		} // -- whileF() 
 	
@@ -99,8 +107,8 @@ async function switchtoPromise({
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
-		  itnF = res => ( itn = ( async q => 
-			( await whileF( res ) ) && itn() 
+		  itnF = ( res, err ) => ( itn = ( async q => 
+			( await whileF( res, err ) ) && itn() 
 			) )() 
 		, itn 
 		; 
