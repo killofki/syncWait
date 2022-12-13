@@ -18,7 +18,7 @@ iGet( [ 1, 2, 3 ], {
 
 var module = module || {}; 
 Object .assign( module .exports = module .exports || {}, { 
-	iMap100, iGet 
+	iMap100, iGet, switchtoPromise 
 	} ); 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
@@ -54,24 +54,35 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 			; 
 			) { 
 		let v = checker( value ); 
-		if ( v instanceof Promise ) { 
-			return switchtoPromise( v ); 
-			} 
+		if ( v instanceof Promise ) { return switchtoPromise({ 
+			  preF : async q => oa .push( await v ) 
+			, whileF : q => itv .next() 
+			, notDoneF : async value => oa .push( await checker( value ) ) 
+			, whenDoneF : Pres => ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
+			}); } 
 		oa .push( v ); 
 		} 
 	return oa;  
 	
-	async function switchtoPromise( v 
-			, itnF = Pres => async ( { value, done } = itv .next() ) => ( 
-				  done ? ( res && res( [] .concat( ... oa ) ), Pres( oa ) ) 
-				: ( oa .push( await checker( value ) ), itn() ) 
-				) 
-			, itn 
-			) { 
-		oa .push( await v ); 
-		return new Promise( Pres => ( itn = itnF( Pres ), itn() ) ); 
-		} // -- switchtoPromise() 
 	} // -- iGet() 
+
+async function switchtoPromise( 
+		  { 
+			  preF 
+			, whileF 
+			, notDoneF 
+			, whenDoneF 
+			} 
+		, itnF = Pres => async ( value, done ) => ( 
+			  { value, done } = whileF() 
+			, done ? whenDoneF( Pres ) 
+				: ( await notDoneF( value ), itn() ) 
+			) 
+		, itn 
+		) { 
+	await preF(); 
+	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
+	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
