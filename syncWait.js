@@ -1,11 +1,13 @@
-iteratorGet( [ 1, 2, 3 ], { 
+"use module"; 
+
+iGet( [ 1, 2, 3 ], { 
 	  checker : q => q > 1 ? delivery( 1000, q + 1 ) : q 
 	, res : v => console .log( v, '123' ) 
 	} ); 
 
 [ 1000001, 10 ] 
 .map( n => Array( n ) ) 
-.map( aa => iteratorGet( iMap100( aa, v => v, { splitcount : 500000 } ), { 
+.map( aa => iGet( iMap100( aa, v => v, { splitcount : 500000 } ), { 
 	  checker : async q => ( 
 		  console .log( await delivery( 0, q ), aa, 'checker' ) 
 		, q 
@@ -13,6 +15,11 @@ iteratorGet( [ 1, 2, 3 ], {
 	, res : v => console .log( v, 'res' ) 
 	} ) ) 
 	; 
+
+var module = module || {}; 
+Object .assign( module .exports = module .exports || {}, { 
+	iMap100, iGet 
+	} ); 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
 	if ( splitcount < 1 ) { 
@@ -34,7 +41,7 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 	return [] .concat( ... ooa ); // done with final 
 	} // -- iMap100() 
 
-function iteratorGet( itv, { checker = v => v, res } = {} ) { 
+function iGet( itv, { checker = v => v, res } = {} ) { 
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
@@ -64,7 +71,7 @@ function iteratorGet( itv, { checker = v => v, res } = {} ) {
 		oa .push( await v ); 
 		return new Promise( Pres => ( itn = itnF( Pres ), itn() ) ); 
 		} // -- switchtoPromise() 
-	} // -- iteratorGet() 
+	} // -- iGet() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
