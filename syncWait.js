@@ -15,6 +15,10 @@ iGet( [ 1, 2, 3 ], {
 	, res : v => console .log( v, 'res' ) 
 	} ) ) 
 	; 
+iGet( ( function * () { yield 1; yield 2; yield 3; } )(), { 
+	  checker : v => ( delivery( 1000 ), v ) 
+	, res : v => console .log( v, 'async iterator' ) 
+	} ); 
 
 var module = module || {}; 
 Object .assign( module .exports = module .exports || {}, { 
@@ -42,46 +46,66 @@ function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) {
 	} // -- iMap100() 
 
 function iGet( itv, { checker = v => v, res } = {} ) { 
+	// res = v => console .log( v ) 
 	if ( ! ( itv .next instanceof Function ) ) { 
 		itv = itv[ Symbol .iterator ](); // error or catch iterator obj 
 		} 
-	let oa = []; 
+	let 
+		  oa = [] 
+		, itvn 
+		; 
 	for( 
-			  let value, done
-			; { value, done } = itv .next()
-			, done && res ? ( res( [] .concat( ... oa ) ), false ) 
-				: true // continue 
+			  let value, done 
+			; itvn = itv .next() 
+			, { value, done } = itvn 
+			, done && res ? res( [] .concat( ... oa ) ) 
+				: typeof done !== 'boolean' && switchtoPromise({ // for // async function *(){} 
+					whileF 
+					}) // break with return  
+			, done === false // continue 
 			; 
 			) { 
 		let v = checker( value ); 
 		if ( v instanceof Promise ) { return switchtoPromise({ 
-			  preF : async q => oa .push( await v ) 
-			, whileF : async ( Pres 
-					, value, done 
-					) => ( 
-				  { value, done } = itv .next() 
-				, done ? ( res && res ( [] .concat( ... oa ) ), Pres( oa ) ) 
-					: oa .push( await checker( value ) ) 
-				, ! done 
+			  preF : async q => ( 
+				  oa .push( await v ) 
+				, itvn = itv .next() 
 				) 
+			, whileF 
 			}); } 
 		oa .push( v ); 
 		} 
 	return oa;  
 	
+	async function whileF( Pres ) { 
+		let { value, done } = await itvn; 
+		done ? ( // when no more 
+				  res && res ( [] .concat( ... oa ) ) 
+				, Pres( oa ) 
+				) 
+			: done === false ? ( // continue 
+				  oa .push( await checker( value ) ) 
+				, itvn = itv .next() // get next pre 
+				) 
+			: console .error( 'sorry..', done, value, itv ) 
+			; 
+		return done === false; 
+		} // -- whileF() 
+	
 	} // -- iGet() 
 
 async function switchtoPromise({ 
-			  preF // missing on press 
+			  preF = q => q // missing on while 
 			, whileF // ( iterator || generator ) .next() 
 			}) { 
 	let  
-		  itnF = Pres => async ( value, done ) => 
-			( await whileF( Pres ) ) && itn() 
+		  itnF = res => ( itn = ( async q => 
+			( await whileF( res ) ) && itn() 
+			) )() 
 		, itn 
 		; 
 	await preF(); 
-	return new Promise( Pres => ( itn = itnF( Pres ) )() ); 
+	return new Promise( itnF ); 
 	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
