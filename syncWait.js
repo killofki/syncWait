@@ -1,58 +1,67 @@
-"use module"; 
+"use module" 
 
-iGet( [ 1, 2, 3 ], { 
-	  checker : q => q > 1 ? delivery( 1000, q + 1 ) : q 
-	, res : v => console .log( v, '123' ) 
-	} ); 
+iGet( [ 1, 2, 3 ], new class { 
+	checker = q => q > 1 ? delivery( 1000, q + 1 ) : q 
+	res = v => console .log( v, '123' ) 
+	} ) 
 
-[ 1000001, 10 ] 
-.map( n => Array( n ) ) 
-.map( aa => iGet( iMap100( aa, v => v, { splitcount : 500000 } ), { 
-	  checker : async q => ( 
-		  console .log( await delivery( 0, q ), aa, 'checker' ) 
-		, q 
-		) 
-	, res : v => console .log( v, 'res' ) 
-	} ) ) 
-	; 
-iGet( ( function * () { yield 1; yield 2; yield 3; } )(), { 
-	  checker : v => ( delivery( 1000 ), v ) 
-	, res : v => console .log( v, 'async iterator' ) 
-	} ); 
+; [ 1000001, 10 ] 
+	.map( n => Array( n ) ) 
+	.map( aa => iGet( iMap100( aa, v => v, { splitcount : 500000 } ), { 
+		  checker : async q => { 
+			console .log( await delivery( 0, q ), aa, 'checker' ) 
+			return q 
+			} 
+		, res : v => console .log( v, 'res' ) 
+		} ) ) 
 
-var module = module || {}; 
-Object .assign( module .exports = module .exports || {}, { 
-	iMap100, iGet, switchtoPromise 
-	} ); 
+iGet( 
+	  ( function * () { 
+		yield 1 
+		yield 2 
+		yield 3 
+		} )() 
+	, new class { 
+		checker = v => ( delivery( 1000 ), v ) 
+		res = v => console .log( v, 'async iterator' ) 
+		} 
+	) 
+
+var module = module || {} 
+Object .assign( 
+	  module .exports = module .exports || {} 
+	, { iMap100, iGet, switchtoPromise } 
+	) 
 
 function * iMap100( a, F = v => v, { splitcount = 100 } = {} ) { 
-	   ( splitcount >= 1 ) 
+	;  ( splitcount >= 1 ) 
 	|| ( splitcount = 1 ) // guard about no result 
-		; 
-	let ooa = []; 
+	
+	let ooa = [] 
 	for ( let ai = 0; ai < a .length; ai += splitcount ) { 
-		let oa = []; 
-		for ( let i = 0; i < splitcount; i += 1 ) { if ( a .hasOwnProperty( ai + i ) ) { 
-			oa[ i ] = F( a[ ai + i ] ); 
-			} } 
-		pipe( 
-			  a .length - ai 
-			, oal => oa .length = oal > splitcount ? splitcount : oal 
-			); 
-		yield oa; 
-		ooa .push( oa ); 
+		let oa = [] 
+		for ( let i = 0; i < splitcount; i += 1 ) { 
+			if ( a .hasOwnProperty( ai + i ) ) { 
+				let v = a[ ai + i ] 
+				oa[ i ] = F( v ) 
+				} 
+			} 
+		let oal = a .length - ai 
+		oa .length = oal > splitcount ? splitcount : oal 
+		yield oa 
+		ooa .push( oa ) 
 		} 
-	return [] .concat( ... ooa ); // done with final 
+	return [] .concat( ... ooa ) // done with final 
 	} // -- iMap100() 
 
 function iGet( itv, { checker = v => v, res } = {} ) { 
 	// res = v => console .log( v ) 
-	   ( itv .next instanceof Function ) 
+	;  ( itv .next instanceof Function ) 
 	|| ( itv = itv[ Symbol .iterator ]() ) // error or catch iterator obj 
-		; 
-	let oa = [], itvn; 
-	for( 
-			  let value, done 
+	
+	let oa = [] 
+	let itvn 
+	for( let value, done 
 			; itvn = itv .next() 
 			, { value, done } = itvn 
 			, done && res ? res( [] .concat( ... oa ) ) 
@@ -60,26 +69,28 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 					whileF 
 					}) // break with return  
 			, done === false // continue 
-			; 
-			) { 
-		let v = checker( value ); 
-		if ( v instanceof Promise ) { return switchtoPromise({ 
-			  preF : async q => ( 
-				  oa .push( await v ) 
-				, itvn = itv .next() 
-				) 
-			, whileF 
-			}); } 
-		oa .push( v ); 
+			; ) { 
+		let v = checker( value ) 
+		if ( v instanceof Promise ) { 
+			return switchtoPromise({ 
+				  preF : async q => { 
+					oa .push( await v ) 
+					return itvn = itv .next() 
+					} 
+				, whileF 
+				}) 
+			} 
+		oa .push( v ) 
 		} 
-	return oa;  
+	return oa 
 	
 	async function whileF( Pres, Perr ) { // use outer // res, oa, itv, itvn, checker 
-		let value, done; 
+		// itvn 
+		let value, done 
 		try { 
-			( { value, done } = await itvn ); 
+			; ( { value, done } = await itvn ) 
 			  done ? ( // when no more 
-				  res && res ( [] .concat( ... oa ) ) 
+				  res && res( [] .concat( ... oa ) ) 
 				, Pres( oa ) 
 				) 
 			: done === false ? ( // continue 
@@ -90,34 +101,32 @@ function iGet( itv, { checker = v => v, res } = {} ) {
 				  console .error( 'sorry.. iterator stoped.', done, value, itv ) 
 				, Perr( itv ) 
 				) 
-				; 
 			} 
 		catch( errv ) { 
-			console .error( 'catched', errv ); 
-			Perr( errv ); 
-			return; 
+			console .error( 'catched', errv ) 
+			Perr( errv ) 
+			return 
 			} 
-		return done === false; 
+		return done === false 
 		} // -- whileF() 
 	
 	} // -- iGet() 
 
 async function switchtoPromise({ 
-			  preF = q => q // missing on while 
-			, whileF // ( iterator || generator ) .next() 
-			}) { 
-	let  
-		  itnF = ( res, err ) => ( itn = ( async q => 
-			( await whileF( res, err ) ) && itn() 
-			) )() 
-		, itn 
-		; 
-	await preF(); 
-	return new Promise( itnF ); 
+		  preF = q => q // missing on while 
+		, whileF // ( iterator || generator ) .next() 
+		}) { 
+	let itn 
+	let itnF = ( res, err ) => ( itn = ( async q => 
+		( await whileF( res, err ) ) && itn() 
+		) )() 
+	
+	await preF() 
+	return new Promise( itnF ) 
 	} // -- switchtoPromise() 
 
 function delivery( delay, v = delay ) { return new Promise( res => 
 	setTimeout( q => res( v ), delay ) 
-	); } // -- delivery() 
+	) } // -- delivery() 
 
-function pipe( ... ar ) { return ar .reduce( ( o, F ) => F( o ) ); } // -- pipe() 
+function pipeReduce( ... ar ) { return ar .reduce( ( o, F ) => F( o ) ); } // -- pipeReduce() 
